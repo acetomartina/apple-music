@@ -1,22 +1,25 @@
-// importo hook React
+// import hook React
 import { useEffect, useState } from 'react'
 
-// importo router
+// import router
 import { Link } from 'react-router-dom'
 
-// importo componente card
+// import componente
 import MusicCard from './MusicCard'
 
-// importo type TypeScript
+// import type
 import type { Song } from '../types/song'
-
-// TYPE PROPS
 
 type NewReleasesProps = {
 
-  // canzone selezionata
+  // brano selezionato
   setSelectedSong: React.Dispatch<
     React.SetStateAction<Song | null>
+  >
+
+  // play globale
+  setIsPlaying: React.Dispatch<
+    React.SetStateAction<boolean>
   >
 
   // ricerca globale
@@ -30,6 +33,7 @@ type NewReleasesProps = {
 
 const NewReleases = ({
   setSelectedSong,
+  setIsPlaying,
   search,
   setSearch,
 }: NewReleasesProps) => {
@@ -37,56 +41,45 @@ const NewReleases = ({
   // state canzoni
   const [songs, setSongs] = useState<Song[]>([])
 
-  // state loading
-  const [isLoading, setIsLoading] = useState(true)
+  // loading
+  const [isLoading, setIsLoading] =
+    useState(true)
 
-  // state errore
-  const [isError, setIsError] = useState(false)
-
-  // fallback ricerca
-  const safeSearch = search || 'queen'
+  // errore
+  const [isError, setIsError] =
+    useState(false)
 
   // fetch API
   useEffect(() => {
 
-    //se search non esiste
-
+    // se search vuota
     if (!search) return
 
-    // reset loading
     setIsLoading(true)
-
-    // reset errore
     setIsError(false)
 
-    // chiamata API Deezer
     fetch(
       `https://striveschool-api.herokuapp.com/api/deezer/search?q=${encodeURIComponent(
-        safeSearch
+        search
       )}`
     )
 
-      // controllo response
       .then((response) => {
 
         if (!response.ok) {
-          throw new Error('Errore nella chiamata')
+          throw new Error('Errore API')
         }
 
         return response.json()
       })
 
-      // dati ricevuti
       .then((data) => {
 
-        // salvo prime 10 canzoni
         setSongs(data.data.slice(0, 10))
 
-        // stop loading
         setIsLoading(false)
       })
 
-      // gestione errore
       .catch((error) => {
 
         console.log(error)
@@ -96,13 +89,13 @@ const NewReleases = ({
         setIsLoading(false)
       })
 
-  }, [safeSearch])
+  }, [search])
 
   return (
 
     <section id="search" className="mt-5">
 
-      {/* titolo sezione */}
+      {/* titolo */}
       <h2 className="fw-bold mb-4">
         Nuove uscite
       </h2>
@@ -113,9 +106,9 @@ const NewReleases = ({
         className="form-control bg-dark text-light border-secondary mb-4"
         placeholder="Cerca artista..."
         value={search}
-
-        // aggiorno ricerca
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(e) =>
+          setSearch(e.target.value)
+        }
       />
 
       {/* loading */}
@@ -128,14 +121,13 @@ const NewReleases = ({
       {/* errore */}
       {isError && (
         <p className="text-danger">
-          Qualcosa è andato storto nel caricamento delle canzoni.
+          Errore caricamento canzoni
         </p>
       )}
 
       {/* griglia */}
       <div className="row g-3">
 
-        {/* ciclo map */}
         {songs.map((song) => (
 
           <div
@@ -143,22 +135,24 @@ const NewReleases = ({
             className="col-6 col-md-4 col-lg-3 col-xl-2"
           >
 
-            {/* card solo se album esiste */}
-            {song.album && (
+            {/* card */}
+            <MusicCard
+              image={song.album.cover_medium}
+              title={song.title}
+              subtitle={song.artist.name}
 
-              <MusicCard
-                image={song.album.cover_medium}
-                title={song.title}
-                subtitle={song.artist.name}
-        
+              // click card
+              onClick={() => {
 
-                // selezione brano
-                onClick={() => setSelectedSong(song)}
-              />
+                // salvo brano
+                setSelectedSong(song)
 
-            )}
+                // autoplay
+                setIsPlaying(true)
+              }}
+            />
 
-            {/* bottone dettagli */}
+            {/* dettagli */}
             <Link
               to={`/song/${song.id}`}
               className="btn btn-outline-light btn-sm mt-2 w-100"

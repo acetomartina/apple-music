@@ -13,20 +13,22 @@ import type { Song } from './types/song'
 
 function App() {
 
-  // state brano selezionato
+  // brano selezionato
   const [selectedSong, setSelectedSong] =
     useState<Song | null>(null)
 
-  // state play globale
-  const [isPlaying, setIsPlaying] = useState(false)
+  // stato play globale
+  const [isPlaying, setIsPlaying] =
+    useState(false)
 
-  // state ricerca
-  const [search, setSearch] = useState('queen')
+  // ricerca globale
+  const [search, setSearch] =
+    useState('queen')
 
   return (
     <div className="app">
 
-      {/* topbar desktop/mobile */}
+      {/* topbar */}
       <TopBar
         selectedSong={selectedSong}
         isPlaying={isPlaying}
@@ -45,13 +47,14 @@ function App() {
           element={
             <MainContent
               setSelectedSong={setSelectedSong}
+              setIsPlaying={setIsPlaying}
               search={search}
               setSearch={setSearch}
             />
           }
         />
 
-        {/* dettagli brano */}
+        {/* dettaglio */}
         <Route
           path="/song/:id"
           element={<SongDetails />}
@@ -59,7 +62,7 @@ function App() {
 
       </Routes>
 
-      {/* modal login */}
+      {/* modal */}
       <LoginModal />
 
       {/* player */}
