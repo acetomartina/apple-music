@@ -1,0 +1,28 @@
+.app {
+  min-height: 100vh;
+  background-color: #1f1f1f;
+  color: white;
+}
+
+.logo-white {
+  filter: invert(1);
+}
+
+.modal {
+  z-index: 2000;
+}
+
+.modal-backdrop {
+  z-index: 1990;
+}
+
+.main-content {
+  padding-bottom: 140px;
+}
+
+@media (min-width: 768px) {
+  .main-content {
+    margin-left: 240px;
+    max-width: 1400px;
+  }
+}
